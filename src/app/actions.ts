@@ -1,6 +1,7 @@
 'use server';
 
 import { analyzeApiResponseForPotentialIssues } from '@/ai/flows/analyze-api-response-for-potential-issues';
+import { analyzePhotoForObjects as analyzePhoto, type AnalyzePhotoForObjectsOutput } from '@/ai/flows/analyze-photo-for-objects';
 
 interface RequestPayload {
   method: string;
@@ -33,6 +34,24 @@ function headersToObject(headers: Headers): Record<string, string> {
     obj[key] = value;
   });
   return obj;
+}
+
+async function urlToDataUri(url: string): Promise<string> {
+    const response = await fetch(url);
+    if (!response.ok) {
+        throw new Error(`Failed to fetch image: ${response.statusText}`);
+    }
+    const blob = await response.blob();
+    const contentType = blob.type;
+    const buffer = await response.arrayBuffer();
+    const base64 = Buffer.from(buffer).toString('base64');
+    return `data:${contentType};base64,${base64}`;
+}
+
+
+export async function analyzePhotoForObjects(imageUrl: string): Promise<AnalyzePhotoForObjectsOutput> {
+  const dataUri = await urlToDataUri(imageUrl);
+  return analyzePhoto({ photoDataUri: dataUri });
 }
 
 export async function sendRequest(
