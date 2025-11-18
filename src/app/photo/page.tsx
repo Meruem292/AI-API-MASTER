@@ -39,6 +39,7 @@ export default function PhotoPage() {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
+            "prefix": "",
             "limit": 100,
             "offset": 0,
             "sortBy": {
