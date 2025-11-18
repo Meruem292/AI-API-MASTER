@@ -41,8 +41,7 @@ async function urlToDataUri(url: string): Promise<string> {
     if (!response.ok) {
         throw new Error(`Failed to fetch image: ${response.statusText}`);
     }
-    const blob = await response.blob();
-    const contentType = blob.type;
+    const contentType = response.headers.get('content-type') || 'application/octet-stream';
     const buffer = await response.arrayBuffer();
     const base64 = Buffer.from(buffer).toString('base64');
     return `data:${contentType};base64,${base64}`;
