@@ -32,25 +32,34 @@ export default function PhotoPage() {
 
       try {
         const response = await fetch(`${SUPABASE_URL}/storage/v1/object/list/${BUCKET_NAME}`, {
+          method: 'POST',
           headers: {
             'apikey': SUPABASE_ANON_KEY,
-            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
-          }
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            "limit": 100,
+            "offset": 0,
+            "sortBy": {
+              "column": "updated_at",
+              "order": "desc"
+            }
+          })
         });
 
         if (!response.ok) {
-          throw new Error(`Failed to fetch photos: ${response.statusText}`);
+           const errorBody = await response.text();
+           console.error("Error response from Supabase:", errorBody);
+           throw new Error(`Failed to fetch photos: ${response.statusText}`);
         }
 
         const files: FileObject[] = await response.json();
 
         if (files && files.length > 0) {
-          const sortedFiles = files
-            .filter(file => file.name !== '.emptyFolderPlaceholder')
-            .sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime());
+          const mostRecentFile = files.find(file => file.name !== '.emptyFolderPlaceholder');
           
-          if (sortedFiles.length > 0) {
-            const mostRecentFile = sortedFiles[0];
+          if (mostRecentFile) {
             const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/${BUCKET_NAME}/${mostRecentFile.name}`;
             setImageUrl(publicUrl);
           } else {
