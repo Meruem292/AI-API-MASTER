@@ -6,7 +6,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { analyzePhotoForObjects } from '@/app/actions';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Bot, Image as ImageIcon } from 'lucide-react';
+import { Bot, Image as ImageIcon, Package } from 'lucide-react';
 
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -25,6 +25,7 @@ interface FileObject {
 interface AnalysisResult {
   trash: boolean;
   plasticBottle: boolean;
+  plasticBottleCount: number;
 }
 
 export default function PhotoPage() {
@@ -170,7 +171,7 @@ export default function PhotoPage() {
                   <AlertTitle>Analysis Complete</AlertTitle>
                   <AlertDescription>The AI has finished analyzing the photo.</AlertDescription>
                 </Alert>
-                <dl className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <dl className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                   <div className="flex flex-col rounded-lg border p-4">
                     <dt className="font-semibold text-muted-foreground">Trash Visible</dt>
                     <dd className="text-2xl font-bold">{analysis.trash ? 'Yes' : 'No'}</dd>
@@ -178,6 +179,10 @@ export default function PhotoPage() {
                   <div className="flex flex-col rounded-lg border p-4">
                     <dt className="font-semibold text-muted-foreground">Plastic Bottle Visible</dt>
                     <dd className="text-2xl font-bold">{analysis.plasticBottle ? 'Yes' : 'No'}</dd>
+                  </div>
+                  <div className="flex flex-col rounded-lg border p-4">
+                    <dt className="font-semibold text-muted-foreground">Plastic Bottle Count</dt>
+                    <dd className="text-2xl font-bold">{analysis.plasticBottleCount}</dd>
                   </div>
                 </dl>
               </div>
