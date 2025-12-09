@@ -38,7 +38,8 @@ export async function GET() {
           "column": "updated_at",
           "order": "desc"
         }
-      })
+      }),
+      cache: 'no-store', // Ensure we always get the latest list
     });
 
     if (!response.ok) {
@@ -53,6 +54,7 @@ export async function GET() {
     const files: FileObject[] = await response.json();
     let mostRecentFile: FileObject | undefined;
     if (files && files.length > 0) {
+        // Find the most recent file that isn't the placeholder
         mostRecentFile = files.find(file => file.name !== '.emptyFolderPlaceholder');
     }
 
@@ -60,6 +62,7 @@ export async function GET() {
       const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/${BUCKET_NAME}/${mostRecentFile.name}`;
       
       try {
+        // Use the same server action as the /photo page
         const analysisResult = await analyzePhotoForObjects(publicUrl);
         return NextResponse.json(analysisResult);
       } catch (analysisError) {
@@ -72,6 +75,7 @@ export async function GET() {
     }
   } catch (err) {
     const message = err instanceof Error ? err.message : "An unknown error occurred.";
+    console.error("Failed to process request:", err)
     return NextResponse.json({ error: "Failed to process request.", details: message }, { status: 500 });
   }
 }
