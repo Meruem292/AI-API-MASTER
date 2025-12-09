@@ -3,10 +3,10 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Skeleton } from '@/components/ui/skeleton';
-import { analyzePhotoForObjects } from '@/app/actions';
+import { analyzePhotoForObjects, AnalyzePhotoForObjectsOutput } from '@/app/actions';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Bot, Image as ImageIcon, Package } from 'lucide-react';
+import { Bot, Image as ImageIcon } from 'lucide-react';
 
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -22,17 +22,11 @@ interface FileObject {
   metadata: Record<string, any>;
 }
 
-interface AnalysisResult {
-  trash: boolean;
-  plasticBottle: boolean;
-  plasticBottleCount: number;
-}
-
 export default function PhotoPage() {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
+  const [analysis, setAnalysis] = useState<AnalyzePhotoForObjectsOutput | null>(null);
   const [analyzing, setAnalyzing] = useState<boolean>(false);
 
   useEffect(() => {
