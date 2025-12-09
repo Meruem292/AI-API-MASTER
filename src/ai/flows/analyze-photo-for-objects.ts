@@ -21,7 +21,8 @@ export type AnalyzePhotoForObjectsInput = z.infer<typeof AnalyzePhotoForObjectsI
 
 const AnalyzePhotoForObjectsOutputSchema = z.object({
   trash: z.boolean().describe('Whether or not any trash is visible in the photo.'),
-  plasticBottle: z.boolean().describe('Whether or not a plastic bottle is visible in the photo.'),
+  plasticBottle: z.boolean().describe('Whether or not at least one plastic bottle is visible in the photo.'),
+  plasticBottleCount: z.number().describe('The number of plastic bottles visible in the photo.').default(0),
 });
 export type AnalyzePhotoForObjectsOutput = z.infer<typeof AnalyzePhotoForObjectsOutputSchema>;
 
@@ -36,7 +37,8 @@ const prompt = ai.definePrompt({
   prompt: `You are an image analysis expert. Analyze the provided photo.
 
 Determine if there is any trash visible in the photo.
-Also, determine if there is a plastic bottle visible in the photo.
+Determine if there is at least one plastic bottle visible in the photo.
+Count the number of plastic bottles visible in the photo.
 
 Return the results in the specified JSON format.
 
